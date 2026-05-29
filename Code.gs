@@ -433,11 +433,12 @@ function getScoreOnDate(league, abbr, displayName, parsedDate) {
 
 function getAllScores(league) {
   try {
-    var data = apiGet(ESPN[league].scoreboard);
+    var todayDateStr = Utilities.formatDate(new Date(), "America/New_York", "yyyyMMdd");
+    var todayLabel = Utilities.formatDate(new Date(), "America/New_York", "MMM d, yyyy");
+    var data = apiGet(ESPN[league].scoreboard + "?dates=" + todayDateStr);
     var events = data && data.events ? data.events : [];
     if (!events.length) return league.toUpperCase() + ": No games today.";
-    var today = Utilities.formatDate(new Date(), "America/New_York", "MMM d");
-    var lines = [league.toUpperCase() + " Scores - " + today];
+    var lines = [league.toUpperCase() + " Scores - " + todayLabel];
     events.forEach(function(game) { lines.push(formatGame(null, game)); });
     return lines.join("\n");
   } catch (err) {
@@ -751,6 +752,3 @@ function cap(str) {
   return str.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
 }
 
-function testDateRoute() {
-  Logger.log(getReply("mets 5/20"));
-}
